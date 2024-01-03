@@ -9,7 +9,6 @@ export default class extends Controller {
     e.preventDefault();
 
     this.modalTarget.open = true
-    document.querySelector('.desktop-overlay').style.zIndex = 0
     this.modalTarget.querySelectorAll('x-transition').forEach((transition) => {
       transition.open = true
     })
@@ -23,7 +22,6 @@ export default class extends Controller {
     })
     this.modalTarget.open = false
 
-    document.querySelector('.desktop-overlay').style.zIndex = 1
     this.dispatch('closed')
   }
 }

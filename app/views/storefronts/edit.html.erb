@@ -1,14 +1,35 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <h1>Returns</h1>
-
-  <fieldset>
-    <div>
-      <legend>Return Reasons</legend>
-      Add or edit return reasons you would like to show the customers during the return request process.
+<div class="flex-grow flex w-full">
+  <div class="flex-grow w-1/4 bg-zinc-800 p-4">
+  </div>
+  <div class="flex flex-col w-3/4">
+    <div class="p-4">
+      <div class="w-[1108px] h-[59px] pt-4 justify-start items-center gap-[42px] inline-flex">
+        <div class="text-black text-[32px] font-bold font-['Inter'] leading-[43.20px]">Returns</div>
+      </div>
+      <div class="border border-solid border-gray-300 rounded-lg p-5 shadow-md bg-white mt-4">
+        <fieldset>
+          <div class="flex gap-10">
+            <div class="w-2/5">
+            <legend class="text-xl md:text-lg font-bold mb-2">Return Reasons</legend>
+              <p>
+                Add or edit return reasons you would like to show the customers during the return request process.
+              </p>
+            </div>
+            <div class="w-3/5">
+              <div class="w-full h-[28.75rem] overflow-y-auto border-gray-200 bg-gray-100 border-2 rounded-lg">
+                <%= render "form", storefront: @storefront %>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
     </div>
 
-    <div>
-      <%= render "form", storefront: @storefront %>
+    <div class="flex mt-auto justify-between px-4 bg-white">
+      <p class="py-3 ml-2 mt-2 text-sm font-semibold">
+        Remember to save your changes before leaving this page
+      </p>
+      <%= link_to "Save", edit_storefront_path(@storefront), class: "btn-yellow rounded-lg mb-3 mt-3 px-5 bg-yellow-400 inline-block font-bold text-justify py-2 mr-2" %>
     </div>
-  </fieldset>
+  </div>
 </div>

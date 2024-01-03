@@ -1,4 +1,6 @@
 class Reason < ApplicationRecord
+  acts_as_list scope: :storefront , :column => :ordering
+
   belongs_to :storefront
 
   validates :code, presence: true, uniqueness: { scope: :storefront_id }

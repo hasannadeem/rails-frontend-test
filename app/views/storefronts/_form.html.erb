@@ -11,33 +11,34 @@
     </div>
   <% end %>
 
-  <div>
-    <div
-      class="return-reason-container"
-    >
-      <template hidden data-nested-form-target="template">
-        <%= form.simple_fields_for :reasons, Reason.new, child_index: 'NEW_RECORD' do |reason_fields| %>
-          <%= render 'reason', f: reason_fields %>
-        <% end %>
-      </template>
-
-      <button type="button" data-action="nested-form#addAssociation" class="btn">
-        <i class="add-icon"></i> Add Return Reason
-      </button>
-      <%= form.simple_fields_for :reasons, @storefront.reasons.ordered do |reason_fields| %>
+  <div
+    class="return-reason-container"
+  >
+    <template hidden data-nested-form-target="template">
+      <%= form.simple_fields_for :reasons, Reason.new, child_index: 'NEW_RECORD' do |reason_fields| %>
         <%= render 'reason', f: reason_fields %>
       <% end %>
+    </template>
+    <div class="border-b mt-2 sticky top-0">
+      <div class="bg-gray-100 rounded-md py-2">
+        <button type="button" data-action="nested-form#addAssociation" class="text-base text-blue-600 font-bold ml-3 flex">
+          <div class ="mb-2">
+            <%= image_tag 'icons/plus.svg', class: 'mr-2', id: 'plus' %>
+          </div>
+          <div class="ml-3 text-blue-600 text-base font-semibold font-['Inter'] leading-snug">
+            Add Return Reason
+          </div>
+        </button>
+      </div>
+    </div>
+    <div id="container_form">
+      <ul data-controller="drag">
+        <%= form.simple_fields_for :reasons, @storefront.reasons.ordered do |reason_fields| %>
+            <%= render 'reason', f: reason_fields %>
+        <% end %>
+      </ul>
+    </div>
 
-      <div hidden data-nested-form-target="addItem"></div>
-    </div>
-  </div>
-
-  <div>
-    <div>
-      Remember to save your changes before leaving this page
-    </div>
-    <div>
-      <%= form.submit 'Save', class: 'btn-primary' %>
-    </div>
+    <div hidden data-nested-form-target="addItem"></div>
   </div>
 <% end %>

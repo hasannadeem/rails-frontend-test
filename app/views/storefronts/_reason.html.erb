@@ -1,29 +1,91 @@
-<div class="nested-form-wrapper">
-  <div class="dashboard-form-fields">
-    <%=
-      f.input :label,
-        label: 'Displayed reason',
-        required: true,
-        placeholder: 'Enter Displayed reason...',
-        hint: "Provide a friendly description for the reason that will be displayed to the customer."
-    %>
-    <%=
-      f.input :code,
-        label: 'Internal return code',
-        required: true,
-        placeholder: 'Enter Internal return code...',
-        hint: "For internal use only. Must be unique. To aid in analytics, we do not recommend changing the code once set."
-    %>
-    <%= f.input :active,
-      label: 'Reason is visible to customers'
-    %>
-    <%= f.input :ordering,
-      label: 'Ordering',
-      placeholder: 'Enter Ordering...',
-      hint: "The order in which the reason will be displayed to the customer. Reasons with lower numbers will be displayed first."
-    %>
+<li class="dashboard-form-fields list-none" data-id="<%= f.object.id %>" data-position="<%= f.object.ordering %>" data-drag-url="/storefronts/1/update_ordering/<%= f.object.id %>" data-controller="modal">
+  <div id="todo-fields" class="nested-form-wrapper  <%= f.object.id %>">
+    <div class="flex items-center bg-gray-100 space-x-2 py-2 border-b cursor-pointer" >
+      <div>
+        <%= image_tag 'icons/move-vertical.svg', class: 'ml-3', id: 'move-vertical' %>
+      </div>
+      <% if f.object.active %>
+        <div>
+          <%= image_tag 'icons/eye-open.svg', class: 'ml-3', id: 'eye-open' %>
+        </div>
+      <% else %>
+        <div>
+          <%= image_tag 'icons/eye-off.svg', class: 'ml-3', id: 'eye-off' %>
+        </div>
+      <% end %>
 
-    <button type="button" class="btn-danger" data-action="nested-form#removeAssociation">Remove</button>
-    <%= f.hidden_field :_destroy %>
+      <div class="flex flex-grow items-center">
+        <p class="field-label <%= f.object.active ? 'text-gray-700' : 'text-gray-400' %> font-bold flex-grow mb-2 ml-2 mt-2">
+          <%= f.object.label.present? ? f.object.label : "Edit to Enter Reason..." %>
+        </p>
+        <div class="mr-2">
+          <button data-action="modal#show" class="btn-outline text-blue-600 font-bold mr-2 -indent-8">Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <dialog data-modal-target="modal" class="fixed inset-0 z-10 overflow-y-auto">
+      <div class="flex items-center justify-center">
+        <div class="fixed inset-0 bg-gray-500 opacity-75"></div>
+
+        <div class="modal-panel p-4 inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-3xl sm:w-full">
+          <button type="button" data-action="modal#hide" class="close-btn absolute text-4xl right-4 text-gray-900 hover:text-gray-800 focus:outline-none">
+            &times;
+          </button>
+
+          <h1 class="modal-title text-2xl font-bold mb-2 mt-2">Edit Return Reason</h1>
+
+          <hr class="mb-5">
+
+          <form id="form_data" class="space-y-4" method="post" action="<%= storefront_path(@storefront) %>" data-remote="true">
+            <%= csrf_meta_tags %>
+            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+            <input type="hidden" name="_method" value="patch" />
+            <input type="hidden" name="storefront[reasons_attributes][<%= f.object.ordering.to_i - 1 %>][id]" value="<%= f.object.id %>" />
+            <div class="mt-4">
+              <label class="font-inter text-md font-semibold leading-6 text-gray-900">Displayed reason</label>
+              <input type="text" name="storefront[reasons_attributes][<%= f.object.ordering.to_i - 1 %>][label]" class="w-full px-4 py-2 border-gray-300 rounded-lg bg-gray-100 mt-2" value="<%= f.object.label %>" />
+              <p class="text-sm mt-2 text-gray-900">Provide a friendly description for the reason that will be displayed to the customer.</p>
+            </div>
+
+            <div class="mt-4">
+              <label class="font-inter text-md  font-semibold leading-6 text-gray-900">Internal return code</label>
+              <input type="text" name="storefront[reasons_attributes][<%= f.object.ordering.to_i - 1 %>][code]" class="w-full px-4 py-2 border-gray-300 rounded-lg bg-gray-100 mt-2" value="<%= f.object.code %>" />
+              <p class="text-sm mt-2 text-gray-900">For internal use only. Must be unique. To aid in analytics, we do not recommend changing the code once set.</p>
+            </div>
+
+            <div data-controller="toggle" class="flex items-center">
+              <div class="mt-4">
+                <input type="hidden" name="storefront[reasons_attributes][<%= f.object.ordering.to_i - 1 %>][active]" data-toggle-target="activeField" value="<%= f.object.active %>" />
+                <div class="flex">
+                  <% if f.object.active %>
+                    <div class="toggle-on" data-action="click->toggle#toggle" data-toggle-target="icon">
+                      <%= image_tag 'icons/eye-open.svg', id: 'eye' %>
+                    </div>
+                  <% else %>
+                    <div class="toggle-off" data-action="click->toggle#toggle" data-toggle-target="icon">
+                      <%= image_tag 'icons/eye-off.svg', id: 'eye_off' %>
+                    </div>
+                  <% end %>
+                  <div class="flex flex-col">
+                    <h1 class="font-inter text-md leading-6 text-gray-900 font-semibold mb-2 ml-2">Return Reason is Hidden</h1>
+                    <p class="ml-2 text-sm text-gray-900">When hidden, this return reason is not offered as an option to the customers. Click on the eye icon to make the return reason visible.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-between mt-4 mb-2">
+              <div class="flex justify-between">
+                <% if f.object.id.present? %>
+                  <%= link_to 'Delete', destroy_reason_storefront_path(@storefront, params: { reason_id: f.object.id }), class: 'delete-btn btn-outline border-2 border-red-400 text-red-400 font-bold px-4 py-2 rounded-lg', data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } %>
+                <% end %>
+              </div>
+              <button type="submit" class="continue-btn continue-btn btn-outline border border-yellow-400 font-bold text-black-500 px-3 py-2 rounded-lg bg-yellow-400 ml-auto">Continue</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </dialog>
   </div>
-</div>
+</li>

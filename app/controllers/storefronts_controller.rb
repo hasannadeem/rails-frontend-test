@@ -1,5 +1,5 @@
 class StorefrontsController < ApplicationController
-  before_action :set_storefront, only: %i[ show edit update destroy ]
+  before_action :set_storefront, only: %i[ show edit update destroy update_ordering destroy_reason]
 
   # GET /storefronts or /storefronts.json
   def index
@@ -47,6 +47,13 @@ class StorefrontsController < ApplicationController
     end
   end
 
+  def update_ordering
+    reason = @storefront.reasons.find(params[:reason_id])
+    reason.insert_at(params[:ordering].to_i)
+
+    render :edit, status: :ok, location: @storefront.reload
+  end
+
   # DELETE /storefronts/1 or /storefronts/1.json
   def destroy
     @storefront.destroy!
@@ -55,6 +62,13 @@ class StorefrontsController < ApplicationController
       format.html { redirect_to storefronts_url, notice: "Storefront was successfully destroyed." }
       format.json { head :no_content }
     end
+  end
+
+  def destroy_reason
+    reason = @storefront.reasons.find(params[:reason_id])
+    reason.destroy!
+
+    redirect_to edit_storefront_path(id: params[:id])
   end
 
   private
